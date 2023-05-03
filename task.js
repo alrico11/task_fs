@@ -20,32 +20,27 @@ function generateId() {
     const newId = parseInt(lastId) + 1;
     return newId;
 };
-
+function inputData(id) {
+    const name = prompt('Masukkan nama barang: ');
+    const price = parseInt(prompt('Masukkan harga barang: '));
+    const quantity = parseInt(prompt('Masukkan kuantitas barang: '));
+    stocks.push({ id, name, price, quantity });
+    fs.writeFileSync('stocks.json', JSON.stringify(stocks));
+    console.log('Data berhasil ditambahkan.');
+}
 function addStock() {
     if (!fs.existsSync("stocks.json")) {
         const id = `1`;
-        const name = prompt('Masukkan nama barang: ');
-        const price = parseInt(prompt('Masukkan harga barang: '));
-        const quantity = parseInt(prompt('Masukkan kuantitas barang: '));
-        stocks.push({ id, name, price, quantity });
-        fs.writeFileSync('stocks.json', JSON.stringify(stocks));
-        console.log('Data berhasil ditambahkan.');
+        inputData(id)
     } else if (fs.existsSync("stocks.json")) {
-        data = fs.readFileSync('stocks.json', 'utf8');
-        stocks = JSON.parse(data);
-        fs.writeFileSync('stocks.json', JSON.stringify(stocks));
+        cekData()
         const id = `${generateId()}`;
-        const name = prompt('Masukkan nama barang: ');
-        const price = parseInt(prompt('Masukkan harga barang: '));
-        const quantity = parseInt(prompt('Masukkan kuantitas barang: '));
-        stocks.push({ id, name, price, quantity });
-        fs.writeFileSync('stocks.json', JSON.stringify(stocks));
+        inputData(id)
     }
 };
 
 function showStocks() {
-    const data = fs.readFileSync('stocks.json', 'utf8');
-    stocks = JSON.parse(data);
+    cekData()
     console.log('Data barang:');
     stocks.forEach(stock => {
         console.log(`ID: ${stock.id}, Nama: ${stock.name}, Harga: ${stock.price}, Kuantitas: ${stock.quantity}`);
