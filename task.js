@@ -2,6 +2,12 @@ const fs = require('fs');
 const prompt = require("prompt-sync")()
 let stocks = [];
 
+
+function cekData() {
+    data = fs.readFileSync('stocks.json', 'utf8');
+    stocks = JSON.parse(data);
+    return stocks
+}
 function generateId() {
     const data = fs.readFileSync('stocks.json', 'utf8');
     const stocks = JSON.parse(data);
@@ -17,7 +23,6 @@ function generateId() {
 
 function addStock() {
     if (!fs.existsSync("stocks.json")) {
-        const stocks = [];
         const id = `1`;
         const name = prompt('Masukkan nama barang: ');
         const price = parseInt(prompt('Masukkan harga barang: '));
@@ -25,14 +30,16 @@ function addStock() {
         stocks.push({ id, name, price, quantity });
         fs.writeFileSync('stocks.json', JSON.stringify(stocks));
         console.log('Data berhasil ditambahkan.');
-    } else {
+    } else if (fs.existsSync("stocks.json")) {
+        data = fs.readFileSync('stocks.json', 'utf8');
+        stocks = JSON.parse(data);
+        fs.writeFileSync('stocks.json', JSON.stringify(stocks));
         const id = `${generateId()}`;
         const name = prompt('Masukkan nama barang: ');
         const price = parseInt(prompt('Masukkan harga barang: '));
         const quantity = parseInt(prompt('Masukkan kuantitas barang: '));
         stocks.push({ id, name, price, quantity });
         fs.writeFileSync('stocks.json', JSON.stringify(stocks));
-        console.log('Data berhasil ditambahkan.');
     }
 };
 
@@ -46,8 +53,7 @@ function showStocks() {
 };
 
 function calculateTotalPrice() {
-    const data = fs.readFileSync('stocks.json', 'utf8');
-    stocks = JSON.parse(data);
+    cekData()
     let totalPrice = 0;
     stocks.forEach(stock => {
         totalPrice += stock.price * stock.quantity;
@@ -57,20 +63,23 @@ function calculateTotalPrice() {
 };
 
 function updateStock() {
+    stocks.push(cekData())
     const id = prompt('Masukkan id barang yang ingin diupdate: ');
-    const field = prompt('Masukkan field yang ingin diupdate (name/price/quantity): ');
-    const value = prompt('Masukkan nilai baru: ');
     const index = stocks.findIndex(stock => stock.id === id);
     if (index !== -1) {
+        const field = prompt('Masukkan field yang ingin diupdate (name/price/quantity): ');
+        const value = prompt('Masukkan nilai baru: ');
         stocks[index][field] = value;
         fs.writeFileSync('stocks.json', JSON.stringify(stocks));
         console.log('Data berhasil diupdate.');
     } else {
         console.log('Data barang tidak ditemukan.');
     }
+    stocks = []
 };
 
 function deleteStock() {
+    stocks.push(cekData())
     const id = prompt('Masukkan id barang yang ingin dihapus: ');
     const index = stocks.findIndex(stock => stock.id === id);
     if (index !== -1) {
@@ -80,6 +89,7 @@ function deleteStock() {
     } else {
         console.log('Data barang tidak ditemukan.');
     }
+    stocks = []
 };
 
 function main() {
