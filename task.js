@@ -75,7 +75,7 @@ function deleteStock() {
     const index = stocks.findIndex(stock => stock.id === id);
     if (index !== -1) {
         stocks.splice(index, 1);
-        fs.writeFileSync('DataBarang/stocks.json', JSON.stringify(stocks));
+        fs.writeFileSync('stocks.json', JSON.stringify(stocks));
         console.log('Data berhasil dihapus.');
     } else {
         console.log('Data barang tidak ditemukan.');
